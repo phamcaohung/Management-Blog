@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+.epr-search-container,
+.epr-category-nav {
+  display: none !important;
+}
+
+/* .epr-main .epr_q53mwh {
+    display: none !important;
+} */
+
+
+/* h1 {
+    font-size: 48px;
+    font-weight: bold;
+} */
+
+p {
+    font-size: 20px;
+}
+
+button {
+    padding: 16px 40px;
+    border-radius: 8px;
+}
+
+/* h2 {
+    font-size: 22px;
+    color: aliceblue;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+h4 {
+    font-size: 20px;
+}
+
+h5 {
+    font-size: 18px;
+    color: aliceblue;
+} */
+
+.main-section {
+  @apply mx-2 md:col-span-2 rounded-md mt-1;
+}
+
+
+
+
