@@ -1,8 +1,8 @@
 import * as types from '../constants/notificationContants'
 
 const initialState = {
-    message: null,
-    severity: null
+    message: "",
+    severity: ""
 }
 
 const notificationReducer = (state = initialState, action) => {
@@ -16,7 +16,11 @@ const notificationReducer = (state = initialState, action) => {
                 severity: payload.severity
             }
         case types.HIDE_NOTIFICATION:
-            return state
+            return {
+                ...state,
+                message: payload,
+                severity: payload
+            }
         default:
             return state
     }

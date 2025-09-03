@@ -5,6 +5,7 @@ import reactionController from '../controller/reaction.controller.js'
 import { fileUpload } from '../middlewares/post/fileUpload.js'
 import { decodeToken } from '../middlewares/auth/decodeToken.js'
 import passport from 'passport'
+import savedController from '../controller/saved.controller.js'
 
 const router = express.Router()
 const requireAuth = passport.authenticate("jwt", { session: false }, null)
@@ -16,7 +17,9 @@ router.get("/", blogsController.getBlogs)
 
 router.get("/:id", blogsController.getBlogById)
 
-router.post("/:id/save-or-unsave", blogsController.saveOrUnSaveBlogs) 
+router.post("/:id/save", savedController.saveBlogs) 
+
+router.post("/:id/un-save", savedController.unSaveBlogs) 
 
 router.get("/saved", blogsController.getSavedBlogs)
 

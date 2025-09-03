@@ -25,10 +25,7 @@ export default class reactionsDAO {
     static async removeReation(data) {
         try {
             const result = await reactionsCollection.findOneAndDelete(data)
-            // if (!result || !result.value) {
-            //     return null
-            // }
-            return result.value?._id
+            return result._id
         } catch (e) {
             throw new Error("Error Remove Reaction: " + e)
         }

@@ -1,4 +1,5 @@
 import { API } from "../../config/apiConfig"
+import { SET_USER } from "../constants/authConstants"
 import * as types from "../constants/blogContants"
 
 
@@ -28,10 +29,10 @@ export const getBlogById = (id) => async (dispatch) => {
 export const getBlogs = (limit, skip) => async (dispatch) => {
 
     try {
-        const { data }  = await API.get(`/blogs?limit=${limit}&skip=${skip}`)
-        
-        dispatch({ 
-            type: types.GET_BLOGS_SUCCESS, 
+        const { data } = await API.get(`/blogs?limit=${limit}&skip=${skip}`)
+
+        dispatch({
+            type: types.GET_BLOGS_SUCCESS,
             payload: {
                 page: skip / limit + 1,
                 blogs: data.formattedBlogs,
@@ -61,13 +62,21 @@ export const updateBlog = (id, data) => async (dispatch) => {
     }
 }
 
-export const saveOrUnSaveBlog = (id, type) => async (dispatch) => {
+export const saveBlog = (id) => async (dispatch) => {
     try {
-        const { data } = await API.post(`/blogs/${id}/save-or-unsave`, type)
-        console.log("data: ", data);
-        dispatch({ type: types.SAVE_OR_UNSAVE_BLOG_SUCCESS, payload: data })
+        const { data } = await API.post(`/blogs/${id}/save`)
+        dispatch({ type: types.SAVE_BLOG_SUCCESS, payload: data })
     } catch (e) {
-        dispatch({ type: types.SAVE_OR_UNSAVE_BLOG_FAILURE, payload: e.message })
+        dispatch({ type: types.SAVE_BLOG_FAILURE, payload: e.message })
+    }
+}
+
+export const unSaveBlog = (id) => async (dispatch) => {
+    try {
+        const { data } = await API.post(`/blogs/${id}/un-save`)
+        dispatch({ type: types.UNSAVE_BLOG_SUCCESS, payload: data })
+    } catch (e) {
+        dispatch({ type: types.UNSAVE_BLOG_FAILURE, payload: e.message })
     }
 }
 
@@ -83,5 +92,5 @@ export const getSaveBlogs = () => async (dispatch) => {
 
 
 export const getBlogsFollowing = (id) => async (dispatch) => {
-    
+
 }

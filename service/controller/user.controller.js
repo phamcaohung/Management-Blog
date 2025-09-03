@@ -8,6 +8,7 @@ import bcrypt from "bcrypt"
 import User from "../model/user.model.js"
 import Token from "../model/token.model.js"
 import { formatBlogs } from "../utils/formatData.js"
+import savedDAO from "../dao/saved.dao.js"
 
 
 export default class userController {
@@ -42,6 +43,7 @@ export default class userController {
         try {
             const { email, password } = req.body
             const existingUser = await usersDAO.signIn(email)
+            
             if (!existingUser)
                 return res.status(400).json({
                     message: "Invalid Email",
@@ -67,7 +69,8 @@ export default class userController {
                 token: token
             })
             await tokenDAO.createToken(newRefreshToken)
-            
+            const savedBlog = await savedDAO.findListSaved(existingUser._id)
+
             res.status(200).json({
                 token,
                 refreshToken,
@@ -78,7 +81,7 @@ export default class userController {
                     email: existingUser.email,
                     role: existingUser.role,
                     avatar: existingUser.avatar,
-                    saveBlog: existingUser.saveBlog
+                    saveBlog: savedBlog
                 },
             })
         } catch (e) {

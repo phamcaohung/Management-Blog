@@ -2,15 +2,10 @@ import * as types from "../constants/authConstants"
 import * as blogTypes from '../constants/blogContants'
 
 
-
 const initialState = {
     user: null,
     token: null,
     refreshToken: null,
-
-    saveBlog: [],
-    saveBlogError: null,
-    saveBlogSuccess: null,
 
     signInError: null,
     signUpError: [],
@@ -98,17 +93,30 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 signInError: null
             }
-        case blogTypes.SAVE_OR_UNSAVE_BLOG_SUCCESS:
-            console.log("payload: ", payload);
+        case blogTypes.SAVE_BLOG_SUCCESS:
             return {
                 ...state,
                 user: {
                     ...state.user,
-                    saveBlog: payload ? payload : []
+                    saveBlog: payload
                 },
                 saveBlogError: null
             }
-        case blogTypes.SAVE_OR_UNSAVE_BLOG_FAILURE:
+        case blogTypes.SAVE_BLOG_FAILURE:
+            return {
+                ...state,
+                saveBlogError: payload
+            }
+        case blogTypes.UNSAVE_BLOG_SUCCESS:
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    saveBlog: payload
+                },
+                saveBlogError: null
+            }
+        case blogTypes.UNSAVE_BLOG_FAILURE:
             return {
                 ...state,
                 saveBlogError: payload

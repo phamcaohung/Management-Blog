@@ -109,7 +109,7 @@ export default class usersDAO {
         try {
             return await usersCollection.updateMany(
                 { saveBlog: id },
-                { $pull: { saveBlog: id }}
+                { $pull: { saveBlog: id } }
             )
         } catch (e) {
             throw new Error("Error Delete Save Blog: " + e)
@@ -121,14 +121,14 @@ export default class usersDAO {
             return await usersCollection.findOne({ email: email, isEmailVerified: true })
         } catch (e) {
             throw new Error("Error Find User Verified: " + e)
-        } 
+        }
     }
 
     static async updateIsEmailVerified(email) {
         try {
             return await usersCollection.findOneAndUpdate(
                 { email: email },
-                { $set: { isEmailVerified: true }},
+                { $set: { isEmailVerified: true } },
             )
         } catch (e) {
             throw new Error("Error Update IsEmailVerified: " + e)
@@ -137,15 +137,50 @@ export default class usersDAO {
 
     static async updateSaveBlog(userId, update) {
         try {
-            const result =  await usersCollection.findOneAndUpdate(
-                { _id: new ObjectId(userId)}, 
+            return await usersCollection.findOneAndUpdate(
+                { _id: new ObjectId(userId) },
                 update,
-                { returnDocument: "after" }
             )
-            console.log("result: ", result);
-            return result
         } catch (e) {
             throw new Error("Error Update Save Blog: " + e)
+        }
+    }
+
+    static async findSavedBlogByUser(userId) {
+        try {
+            return await usersCollection.findOne([
+                { $match: { _id: new ObjectId(userId) } },
+                { $sort: { createdAt: -1 } },
+                {
+                    $project: {
+                        saveBlog: 1
+                    }
+                }
+            ])
+        } catch (e) {
+            throw new Error("Error Find Save Blog: " + e)
+        }
+    }
+
+    static async addSavedBlogToUser(saveId, userId) {
+        try {
+            return usersCollection.findOneAndUpdate(
+                { _id: new ObjectId(userId) },
+                { $addToSet: { saveBlog: new ObjectId(saveId) } }
+            )
+        } catch (e) {
+            throw new Error("Error Add Save Blog: " + e)
+        }
+    }
+
+    static async removeSavedBlogFromUser(saveId, userId) {
+        try {
+            return await usersCollection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $pull: { saveBlog: new ObjectId(saveId) } }
+            )
+        } catch (e) {
+            throw new Error("Error Remove Save Blog: " + e)
         }
     }
 }

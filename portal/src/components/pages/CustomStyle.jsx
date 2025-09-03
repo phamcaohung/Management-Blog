@@ -12,8 +12,8 @@ export const CustomTextField = styled(TextField)({
     "& label.Mui-focused": { color: "white" },
     "& .MuiOutlinedInput-root": {
         "& fieldset": { borderColor: "#3A3B3C" },
-        "&:hover fieldset": { borderColor: "#3A3B3C" },
-        "&.Mui-focused fieldset": { borderColor: "#3A3B3C" },
+        "&:hover fieldset": { borderColor: "white" },
+        "&.Mui-focused fieldset": { borderColor: "white" },
     },
     "& .MuiInputBase-root": {
         color: "white",

@@ -1,26 +1,34 @@
 import * as types from '../constants/blogContants'
 import * as reactionTypes from '../constants/reactionConstants'
 import * as commentTypes from '../constants/commentContants'
+import * as userTypes from "../constants/userConstants"
+
 
 const initialState = {
     blog: null,
     blogs: [],
+    profile: [],
     blogsFollowing: [],
     totalBlogs: 0,
     followingUsersBlogs: [],
     blogError: null,
     reactionError: null,
     commentError: null,
+    profileError: null,
 }
 
 const blogReducer = (state = initialState, action) => {
     const { type, payload } = action
 
     switch (type) {
-        case types.CREATE_BLOG_SUCCESS:
+        case types.CREATE_BLOG_SUCCESS: 
             return {
                 ...state,
                 blogs: [payload, ...state.blogs],
+                profile: state.profile.length !== 0 ? {
+                    ...state.profile,
+                    blogsLast30Days: [payload, ...state.profile.blogsLast30Days]
+                } : [],
                 blogError: null,
             }
         case types.CREATE_BLOG_FAILURE:
@@ -29,7 +37,7 @@ const blogReducer = (state = initialState, action) => {
                 blogError: payload
             }
         case types.GET_BLOGS_SUCCESS:
-            if(payload.page === 1) 
+            if (payload.page === 1)
                 return {
                     ...state,
                     blogs: payload ? payload.blogs : [],
@@ -89,11 +97,11 @@ const blogReducer = (state = initialState, action) => {
                 ...state,
                 blogs: state.blogs.map(
                     item => item._id === payload.blog
-                        ? 
-                            {
-                                ...item,
-                                comments: [...item.comments, payload]
-                            } 
+                        ?
+                        {
+                            ...item,
+                            comments: [...item.comments, payload]
+                        }
                         : item
                 ),
                 commentError: null
@@ -103,16 +111,16 @@ const blogReducer = (state = initialState, action) => {
                 ...state,
                 commentError: payload
             }
-        case types.GET_BLOGS_SAVE_SUCCESS: 
+        case userTypes.GET_PROFILE_BY_ID_SUCCESS:
             return {
                 ...state,
-                saveBlogs: payload ? payload : null,
-                saveBlogError: null
+                profile: payload ? payload : [],
+                profileError: null
             }
-        case types.GET_BLOGS_SAVE_FAILURE:
+        case userTypes.GET_PROFILE_BY_ID_FAILURE:
             return {
                 ...state,
-                saveBlogError: payload
+                profileError: payload
             }
         default:
             return state

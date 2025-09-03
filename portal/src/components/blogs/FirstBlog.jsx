@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import CreateBlogModal from "../modals/CreateBlogModal";
 import { CustomAvatar } from "../pages/CustomStyle";
+import { useNavigate } from "react-router-dom";
 
 
 const FirstBlog = () => {
@@ -16,11 +17,13 @@ const FirstBlog = () => {
     ]
     const [ openModal, setOpenModal ] = useState(false)
     const user = useSelector(store => store.auth?.user)
+    const navigate = useNavigate()
 
     return (
         <div className="bg-[#242526] rounded-2xl p-5">
             <div className="flex justify-evenly mb-5">
                 <CustomAvatar
+                    onClick={() => navigate(`/profile/${user._id}`)}
                     src={user.avatar}
                     sx={{ width: 70, height: 70, marginRight: 3 }}
                 />

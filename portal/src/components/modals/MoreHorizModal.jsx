@@ -2,25 +2,27 @@ import { Collapse } from "@mui/material"
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from "react-redux";
-import { saveOrUnSaveBlog } from "../../redux/actions/blogAction";
+import { saveBlog, unSaveBlog } from "../../redux/actions/blogAction";
 import EditIcon from '@mui/icons-material/Edit';
+import { showNotification } from "../../redux/actions/notificationAction";
 
 
-const MoreHorizModal = ({ open, blogId, conditionShow, setNotification }) => {
+const MoreHorizModal = ({ open, blogId, conditionShow }) => {
     const savedBlog = useSelector(store => store.auth?.user)?.saveBlog
+    const savedBlogId = savedBlog?.map(item => item.blog._id)
     const dispatch = useDispatch()
-    console.log("savedBlog: ", savedBlog);
+    const isSave = savedBlogId.includes(blogId)
     
-    const isSave = savedBlog.some(id => id === blogId)
-    console.log("isSave: ", isSave);
+    
     const handleSaveBlog = async () => {
-        const type = isSave ? "unsave" : "save"
-        await dispatch(saveOrUnSaveBlog(blogId, { type: type }))
-        setNotification(
-            isSave 
-                ? `UnSave Blog Successfully - ${Date.now()}` 
-                : `Save Blog Successfully - ${Date.now()}`
-        )
+        if(isSave) {
+            await dispatch(unSaveBlog(blogId))
+            dispatch(showNotification('UnSave Blog Successfully', 'success'))
+        }
+        else {
+            await dispatch(saveBlog(blogId))
+            dispatch(showNotification('Save Blog Successfully', 'success'))
+        } 
     }
 
     return (

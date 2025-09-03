@@ -1,53 +1,60 @@
 import { Alert } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { hideNotification } from "../../redux/actions/notificationAction"
 
 
-const NotificationModal = ({ notification, severity, setNotification }) => {
-    const [visible, setVisible] = useState(false)
+const NotificationModal = () => {
+    const notification = useSelector(store => store.notification)
+
+    const dispacth = useDispatch()
 
     const handleClose = () => {
-        setVisible(false)
-        setNotification(null)
+        dispacth(hideNotification())
     }
 
     useEffect(() => {
         if (notification) {
-            setVisible(true)
-            const timer = setTimeout(() => setVisible(false), 10 * 1000)
+            const timer = setTimeout(() => {
+                dispacth(hideNotification())
+            }, 5000)
             return () => clearTimeout(timer)
-        } else 
-            setVisible(false)
-    }, [notification])
+        }
+    }, [notification, dispacth])
 
     return (
-        <div
-            className={`
+        <>
+            {notification.message &&
+                <div
+                    className={`
                     fixed top-0 left-1/2 -translate-x-1/2 mt-5 transition-all duration-500
-                    z-50 ${visible ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'} 
+                    z-2000 ${notification ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'} 
                 `}
-        >
-            <Alert
-                severity={severity}
-                className="w-[600px] flex justify-center items-center"
-                sx={{
-                    ".MuiAlert-icon .MuiSvgIcon-root": {
-                        fontSize: 40
-                    }
-                }}
-            >
-                <div className="flex justify-center items-center">
-                    <h3 className="mr-5 text-center text-xl">
-                        {notification}
-                    </h3>
-                    <button
-                        onClick={handleClose}
-                        className={`cursor-pointer font-bold  ${severity === "error" ? 'bg-red-300 hover:bg-red-500' : 'bg-green-300 hover:bg-green-500' }`}
+                >
+                    <Alert
+                        severity={notification.severity}
+                        className="w-[600px] flex justify-center items-center"
+                        sx={{
+                            ".MuiAlert-icon .MuiSvgIcon-root": {
+                                fontSize: 40
+                            }
+                        }}
                     >
-                        OK
-                    </button>
+                        <div className="flex justify-center items-center">
+                            <h3 className="mr-5 text-center text-xl">
+                                {notification.message}
+                            </h3>
+                            <button
+                                onClick={handleClose}
+                                className={`cursor-pointer font-bold  ${notification.severity === "error" ? 'bg-red-300 hover:bg-red-500' : 'bg-green-300 hover:bg-green-500'}`}
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </Alert>
                 </div>
-            </Alert>
-        </div>
+            }
+        </>
     )
 }
 

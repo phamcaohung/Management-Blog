@@ -1,10 +1,9 @@
 import { Box, ClickAwayListener } from "@mui/material"
-import NotificationModal from "../modals/NotificationModal"
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ReactionModal from "../modals/ReactionModal";
 import { REACTIONS } from "../../utils/data";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { showNotification } from "../../redux/actions/notificationAction";
 
 
 const ReactionComment = ({ myReaction }) => {
@@ -13,7 +12,6 @@ const ReactionComment = ({ myReaction }) => {
     const [reaction, setReaction] = useState(null)
     const [pick, setPick] = useState(null)
     const dispatch = useDispatch()
-    const [notification, setNotification] = useState(null)
     const currentReaction = REACTIONS.find(item => item.reaction === myReaction?.reaction)
 
     const handleEnter = (e) => {
@@ -32,8 +30,8 @@ const ReactionComment = ({ myReaction }) => {
             const data = {
                 blogId: blogId
             }
-            //await dispatch(unReactionBlog(user._id, data))
-            setNotification(`UnReaction ${item.label} Successfully`)
+            await dispatch(unReactionBlog(user._id, data))
+            dispatch(showNotification(`UnReaction ${item.label} Successfully`, "success"))
         }
         else {
             const data = {
@@ -41,8 +39,8 @@ const ReactionComment = ({ myReaction }) => {
                 blogId: blogId
             }
             setPick(item)
-            //await dispatch(reactionBlog(user._id, data))
-            setNotification(`Reaction ${item.label} Successfully`)
+            await dispatch(reactionBlog(user._id, data))
+            dispatch(showNotification(`Reaction ${item.label} Successfully`, "success"))
         }
     }
 
@@ -54,42 +52,34 @@ const ReactionComment = ({ myReaction }) => {
     }, [myReaction])
 
     return (
-        <>
-            {notification && 
-                <NotificationModal
-                    notification={notification}
-                    severity={'success'}
-                />
-            }
-            <ClickAwayListener onClickAway={() => setOpen(false)}>
-                <Box
-                    onMouseEnter={handleEnter}
-                    onMouseLeave={handleLeave}
-                >
-                    <div className="flex items-center cursor-pointer">
-                        {pick && 
-                            <img
-                                src={currentReaction ? currentReaction.emoji : pick?.emoji}
-                                alt=""
-                                className="w-15 h-15 mr-2"
-                            />
+        <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <Box
+                onMouseEnter={handleEnter}
+                onMouseLeave={handleLeave}
+            >
+                <div className="flex items-center cursor-pointer">
+                    {pick &&
+                        <img
+                            src={currentReaction ? currentReaction.emoji : pick?.emoji}
+                            alt=""
+                            className="w-15 h-15 mr-2"
+                        />
+                    }
+                    <h6 className="text-gray-300 text-base ml-4 mt-2">
+                        {currentReaction
+                            ? currentReaction.label
+                            : pick ? pick.label : 'Like'
                         }
-                        <h6 className="text-gray-300 text-base ml-4 mt-2">
-                            {currentReaction
-                                ? currentReaction.label
-                                : pick ? pick.label : 'Like'
-                            }
-                        </h6>
-                    </div>
+                    </h6>
+                </div>
 
-                    <ReactionModal
-                        open={open}
-                        reaction={reaction}
-                        handlePickReaction={handlePickReaction}
-                    />
-                </Box>
-            </ClickAwayListener>
-        </>
+                <ReactionModal
+                    open={open}
+                    reaction={reaction}
+                    handlePickReaction={handlePickReaction}
+                />
+            </Box>
+        </ClickAwayListener>
     )
 }
 

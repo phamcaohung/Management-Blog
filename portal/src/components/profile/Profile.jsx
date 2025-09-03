@@ -8,10 +8,11 @@ import { getProfileByUser } from "../../redux/actions/userAction";
 import { CustomAvatar } from "../pages/CustomStyle";
 import FirstBlog from "../blogs/FirstBlog";
 import Blogs from "../blogs/Blogs";
+import SkeletonBlog from "../loading/SkeletonBlog";
 
 
 const Profile = () => {
-    const profile = useSelector(store => store.user?.profile)
+    const profile = useSelector(store => store.blogs?.profile)
     const dispatch = useDispatch()
     const { userId } = useParams()
     const [loading, setLoading] = useState(true)
@@ -104,13 +105,19 @@ const Profile = () => {
                 </Grid>
                 <Grid size={7} paddingY={5}>
                     <FirstBlog />
-                    {profile?.blogsLast30Days?.map((item) => (
-                        <Blogs
-                            userId={userId}
-                            key={item._id}
-                            blog={item}
-                        />
-                    ))}
+                    {loading ? (
+                        profile?.blogsLast30Days?.map((item) =>
+                            <SkeletonBlog key={item._id} />
+                        )
+                    ) : (
+                        profile?.blogsLast30Days?.map((item) =>
+                            <Blogs
+                                userId={userId}
+                                key={item._id}
+                                blog={item}
+                            />
+                        )
+                    )}
                 </Grid>
             </Grid>
         </div>

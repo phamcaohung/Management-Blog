@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { VisuallyHiddenInput } from "../pages/CustomStyle";
 import { createBlog } from "../../redux/actions/blogAction";
-import NotificationModal from "./NotificationModal";
 import EmojiEmotionsIcon from '@mui/icons-material/Mood';
 import EmojiModal from "./EmojiModal";
+import { showNotification } from "../../redux/actions/notificationAction";
 
 
 
@@ -15,7 +15,6 @@ const CreateBlogModal = ({ open, setOpenModal }) => {
     const user = useSelector(store => store.auth?.user)
     const [content, setContent] = useState("")
     const [file, setFile] = useState(null)
-    const [notification, setNotification] = useState(null)
     const dispatch = useDispatch()
     const isDisabled = file === null && content === ""
     const [openEmoji, setOpenEmoji] = useState(false)
@@ -29,17 +28,25 @@ const CreateBlogModal = ({ open, setOpenModal }) => {
             selectedFile.type !== "image/jpg" &&
             selectedFile.type !== "video/mp4"
         )
-            setNotification("Please upload a valid image file (jpeg, jpg, png) or video file mp4.")
+            dispatch(showNotification(
+                "Please upload a valid image file (jpeg, jpg, png) or video file mp4.",
+                "error"
+            ))
         else if (
             selectedFile.type === "image/jpeg" &&
             selectedFile.type === "image/png" &&
             selectedFile.type === "image/jpg" &&
             file.size > 10 * 1024 * 1024
         )
-            setNotification("Please upload an image file less than 10MB")
-        else if (selectedFile.type === "video/mp4" && selectedFile.size > 50 * 1024 * 1024) {
-            setNotification("Please select an image or video file under 50MB.")
-        }
+            dispatch(showNotification(
+                "Please upload an image file less than 10MB",
+                "error"
+            ))
+        else if (selectedFile.type === "video/mp4" && selectedFile.size > 50 * 1024 * 1024)
+            dispatch(showNotification(
+                "Please select an image or video file under 50MB.",
+                "error"
+            ))
         else
             setFile(selectedFile)
     }
@@ -51,6 +58,7 @@ const CreateBlogModal = ({ open, setOpenModal }) => {
             file: file
         }
         await dispatch(createBlog(data))
+        dispatch(showNotification("Create Blog Successfully", "success"))
         setOpenModal(false)
     }
 
@@ -62,12 +70,6 @@ const CreateBlogModal = ({ open, setOpenModal }) => {
     return (
         <Modal open={open} onClose={() => setOpenModal(false)}>
             <div className="bg-[#252728] rounded-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-auto">
-                {notification &&
-                    <NotificationModal
-                        notification={notification}
-                        severity={'error'}
-                    />
-                }
                 <div className="mb-3 flex justify-between mt-3 px-5 ">
                     <div></div>
                     <h6 className="text-3xl font-bold text-white">Create Blog</h6>

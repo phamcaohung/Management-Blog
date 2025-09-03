@@ -11,7 +11,7 @@ import relativeTime from "dayjs/plugin/relativeTime.js"
 import { ObjectId } from "mongodb"
 import Blog from "../model/blog.model.js";
 import { formatBlogs } from "../utils/formatData.js";
-import { log } from "console";
+import savedDao from "../dao/saved.dao.js";
 
 
 dayjs.extend(utc)
@@ -133,27 +133,6 @@ export default class blogController {
             const formattedBlogs = formatBlogs(saveBlog)
 
             res.status(200).json(formattedBlogs)
-        } catch (e) {
-            res.status(500).json({ error: e.message })
-        }
-    }
-
-    static async saveOrUnSaveBlogs(req, res) {
-        try {
-            const blogId = req.params.id
-            const userId = req.userId
-            const { type } = req.body
-            
-            const update = {}
-            update[type === "save" ? "$addToSet" : "$pull"] = {
-                saveBlog: new ObjectId(blogId)
-            }
-            const user = await usersDAO.updateSaveBlog(userId, update)
-
-            const saveBlog = user.saveBlog
-            console.log("saveBlog: ", saveBlog);
-            
-            res.status(200).json(saveBlog)
         } catch (e) {
             res.status(500).json({ error: e.message })
         }

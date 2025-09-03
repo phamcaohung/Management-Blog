@@ -8,7 +8,7 @@ import MoreHorizModal from "../modals/MoreHorizModal";
 import ReactionBlog from "../pages/ReactionBlog";
 import { REACTIONS_IMAGE } from "../../utils/data";
 import { CustomAvatar } from "../pages/CustomStyle";
-import NotificationModal from "../modals/NotificationModal";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -16,25 +16,23 @@ const Blogs = ({ blog, userId }) => {
     const [open, setOpen] = useState(false)
     const [moreHorizIcon, setMoreHorizIcon] = useState(false)
     const conditionShow = userId === blog.user?._id 
-    const [notification, setNotification] = useState(null)
+    const navigate = useNavigate()
 
     return (
         <div className="bg-[#242526] rounded-2xl mt-10 p-5">
-            {notification &&
-                <NotificationModal 
-                    notification={notification}
-                    severity={'success'}
-                />
-            }
             <div className="flex justify-between">
                 <div className="flex">
                     <CustomAvatar
                         src={blog?.user?.avatar}
                         sx={{ width: 70, height: 70, marginRight: 3 }}
+                        onClick={() => navigate(`/profile/${blog.user?._id }`)}
                     />
                     <div>
                         <div className="flex items-center">
-                            <h2 className="font-bold text-gray-300 text-xl">
+                            <h2 
+                                className="font-bold text-gray-300 text-xl hover:underline cursor-pointer"
+                                onClick={() => navigate(`/profile/${blog.user?._id }`)}
+                            >
                                 {blog.user?.name}
                             </h2>
                             <h3 className="font-bold text-blue-400 ml-5 text-lg cursor-pointer">
@@ -54,7 +52,6 @@ const Blogs = ({ blog, userId }) => {
                         open={moreHorizIcon} 
                         blogId={blog._id}
                         conditionShow={conditionShow}
-                        setNotification={setNotification}
                     />
                 </div>
             </div>

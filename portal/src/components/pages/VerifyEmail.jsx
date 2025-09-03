@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../../config/apiConfig";
 import { TextField } from "@mui/material";
 import LoadingSpinner from "../loading/LoadingSpinner";
-import NotificationModal from "../modals/NotificationModal";
+import { useDispatch } from "react-redux";
+import { showNotification } from "../../redux/actions/notificationAction";
 
 
 const VerifyEmail = () => {
@@ -13,9 +14,9 @@ const VerifyEmail = () => {
     const codeFromUrl = searchParams.get("code")
     const emailFromUrl = searchParams.get("email")
     const email = location.state ? location.state : emailFromUrl
+    const dispatch = useDispatch()
 
     const [code, setCode] = useState(codeFromUrl ? codeFromUrl : "")
-    const [notification, setNotification] = useState("")
     const [loading, setLoading] = useState(false)
     const [verifyEmail, setVerifyEmail] = useState(false)
 
@@ -24,16 +25,20 @@ const VerifyEmail = () => {
             setLoading(true)
             const res = await API.get(`/users/auth/verify?code=${code}&email=${email}`)
             if (res.status === 200) {
+                dispatch(showNotification(
+                    res.message, 
+                    res.message === 'Email verification process was successful' ? 'success' : 'error'
+                ))
                 setNotification(res.message)
                 setVerifyEmail(true)
                 setCode("")
                 setLoading(false)
             }
         } catch (e) {
-            setNotification(e?.response?.data?.message || "Verification failed")
+            dispatch(showNotification("Verification failed", "error"))
             setLoading(false)
         }
-    }, [code, email, navigate, setNotification, setLoading])
+    }, [code, email, navigate, setLoading])
 
     useEffect(() => {
         if (codeFromUrl && emailFromUrl) {
@@ -43,12 +48,6 @@ const VerifyEmail = () => {
 
     return (
         <div className="flex justify-center items-center h-[100vh] bg-[#111827] bg-gradient-to-r from-[#111827] to-[#aeafb5]">
-            {notification && 
-                <NotificationModal
-                    notification={notification}
-                    severity={notification === 'Email verification process was successful' ? 'success' : 'error'}
-                />
-            }
             <div className="bg-white rounded-2xl w-[800px] h-[550px] flex items-center justify-center">
                 <div className="px-20">
                     {verifyEmail ? (

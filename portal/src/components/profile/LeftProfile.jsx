@@ -14,7 +14,7 @@ const LeftProfile = ({ photos }) => {
                     See All Photos
                 </h3>
             </div>
-            <div className="flex justify-around mt-5">
+            <div className="flex flex-wrap mt-5 gap-4">
                 {photos?.map((item, index) => (
                     <CustomAvatar
                         key={index}

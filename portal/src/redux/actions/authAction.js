@@ -1,5 +1,6 @@
 import { refreshTokenAction } from "./refreshTokenAction"
 import * as types from "../constants/authConstants"
+import * as notiTypes from "../constants/notificationContants"
 import { API } from "../../config/apiConfig"
 import { isValidToken } from "../../config/authConfig";
 
@@ -28,12 +29,16 @@ export const signUp = (data, navigate, verify = false) => async (dispatch) => {
         await API.post("/users/signup", data, {
             headers: { "Content-Type": "multipart/form-data" }
         })
-        if (!verify) 
-            dispatch({ type: types.SIGNIN_SUCCESS, payload: "Create Account successfully" })
-        else {
-            dispatch({ type: types.SIGNIN_SUCCESS, payload: "Create Account successfully" })
+        dispatch({ type: types.SIGNIN_SUCCESS, payload: "Create Account successfully" })
+        dispatch({ 
+            type: notiTypes.SHOW_NOTIFICATION, 
+            payload: {
+                message: "Create Account successfully",
+                severity: "success"
+            } 
+        })
+        if(verify)
             navigate("/auth/verify", { state: data.email })
-        }
     } catch (e) {
         dispatch({ type: types.SIGNIN_FAILURE, payload: e.message })
     }

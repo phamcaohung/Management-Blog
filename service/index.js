@@ -8,6 +8,7 @@ import emailsDAO from './dao/email.dao.js'
 import blogsDAO from './dao/blog.dao.js'
 import commentsDAO from './dao/comment.dao.js'
 import reactionsDAO from './dao/reaction.dao.js'
+import savedDAO from './dao/saved.dao.js'
 
 async function main() {
   dotenv.config()
@@ -24,6 +25,7 @@ async function main() {
     await blogsDAO.injectDB(client)
     await commentsDAO.injectDB(client)
     await reactionsDAO.injectDB(client)
+    await savedDAO.injectDB(client)
     app.listen(port, () => {
       console.log(`Server is running on port ${hostName}:${port}`)
     })

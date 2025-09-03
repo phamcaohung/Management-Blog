@@ -226,6 +226,9 @@ export default class blogsDAO {
                         createdAt: { $gte: last30Days }
                     }
                 },
+                {
+                    $sort: { createdAt: -1 } 
+                },
                 //users
                 {
                     $lookup: {
@@ -325,112 +328,6 @@ export default class blogsDAO {
             ]).toArray()
         } catch (e) {
             throw new Error("Error Get Blogs: " + e)
-        }
-    }
-
-    static async findSaveBlog(user) {
-        try {
-            return await blogsCollection.aggregate([
-                { $match: { _id: { $in: user.savedPosts.map(id => new ObjectId(id)) } } },
-                //users
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "user",
-                        foreignField: "_id",
-                        as: "user"
-                    }
-                },
-                {
-                    $unwind: {
-                        path: "$user",
-                        preserveNullAndEmptyArrays: true
-                    }
-                },
-                //comments
-                {
-                    $lookup: {
-                        from: "comments",
-                        localField: "comments",
-                        foreignField: "_id",
-                        as: "comments",
-                        pipeline: [
-                            {
-                                $lookup: {
-                                    from: "users",
-                                    localField: "user",
-                                    foreignField: "_id",
-                                    as: "user"
-                                }
-                            },
-                            {
-                                $unwind: {
-                                    path: "$user",
-                                    preserveNullAndEmptyArrays: true
-                                }
-                            },
-                            {
-                                $project: {
-                                    content: 1,
-                                    createdAt: 1,
-                                    "user.name": 1,
-                                    "user.avatar": 1,
-                                }
-                            }
-                        ]
-                    }
-                },
-                //reactions
-                {
-                    $lookup: {
-                        from: "reactions",
-                        localField: "reactions",
-                        foreignField: "_id",
-                        as: "reactions",
-                        pipeline: [
-                            {
-                                $lookup: {
-                                    from: "users",
-                                    localField: "user",
-                                    foreignField: "_id",
-                                    as: "user"
-                                }
-                            },
-                            {
-                                $unwind: {
-                                    path: "$user",
-                                    preserveNullAndEmptyArrays: true
-                                }
-                            },
-                            {
-                                $project: {
-                                    reaction: 1,
-                                    createdAt: 1,
-                                    "user.name": 1,
-                                    "user.avatar": 1,
-                                    "user._id": 1
-                                }
-                            }
-                        ]
-                    }
-                },
-                //blogs
-                {
-                    $project: {
-                        content: 1,
-                        fileUrl: 1,
-                        fileType: 1,
-                        comments: 1,
-                        reactions: 1,
-                        createdAt: 1,
-                        "user.name": 1,
-                        "user.avatar": 1,
-                        "user._id": 1,
-                    }
-                }
-            ]).toArray()
-        } catch (e) {
-            throw new Error("Error Save Blogs: " + e)
         }
     }
 

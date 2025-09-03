@@ -12,9 +12,12 @@ import RightBlog from "../blogs/RightBlog";
 const Home = () => {
     const blogs = useSelector(store => store.blogs?.blogs)
     const user = useSelector(store => store.auth?.user)
+    const profile = JSON.parse(localStorage.getItem("profile"))?.user
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     console.log("user: ", user)
+    console.log("profile: ", profile);
+    
 
     useEffect(() => {
         const fetch = async () => {

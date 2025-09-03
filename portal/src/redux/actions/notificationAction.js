@@ -6,5 +6,5 @@ export const showNotification = (message, severity) => async (dispatch) => {
 }
 
 export const hideNotification = () => async (dispatch) => {
-    dispatch({ type: types.HIDE_NOTIFICATION })
+    dispatch({ type: types.HIDE_NOTIFICATION, payload: "" })
 }

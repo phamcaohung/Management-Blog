@@ -1,8 +1,12 @@
 import { Grid } from "@mui/material"
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
 
 
 const SaveBlogs = () => {
-    
+    const saveBlogs = useSelector(store => store.auth?.saveBlogs)
+
+    useEffect
 
     return (
         <div>
@@ -11,7 +15,7 @@ const SaveBlogs = () => {
 
                 </Grid>
                 <Grid size={8}>
-
+                    
                 </Grid>
             </Grid>
         </div>

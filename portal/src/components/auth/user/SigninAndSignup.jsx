@@ -7,16 +7,14 @@ import { clearError, signIn } from "../../../redux/actions/authAction";
 import AuthModal from "../../modals/AuthModal";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { VisuallyHiddenInput } from "../../pages/CustomStyle";
-import NotificationModal from "../../modals/NotificationModal";
+import { hideNotification, showNotification } from "../../../redux/actions/notificationAction";
 
 const SigninAndSignup = ({ name }) => {
     const signInError = useSelector(store => store.auth?.signInError)
     const [className, setClassName] = useState(name)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [avatar, setAvatar] = useState(null)
-    //const [avatarError, setAvatarError] = useState(null)
     const [pendingData, setPendingData] = useState(null)
-    const [notification, setNotification] = useState(null)
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -30,19 +28,13 @@ const SigninAndSignup = ({ name }) => {
             file.type !== "image/jpg"
         ) {
             setAvatar(null)
-            setNotification({
-                message: "Please upload a valid image file (jpeg, jpg, png)",
-                type: "error"
-            })
+            dispatch(showNotification("Please upload a valid image file (jpeg, jpg, png)", "error"))
         } else if (file.size > 10 * 1024 * 1024) {
             setAvatar(null)
-            setNotification({
-                message: "Please upload an image file less than 10MB",
-                type: "error"
-            })
+            dispatch(showNotification("Please upload an image file less than 10MB", "error"))
         } else {
             setAvatar(file)
-            setAvatarError(null)
+            dispatch(hideNotification())
         }
     }
 
@@ -53,10 +45,7 @@ const SigninAndSignup = ({ name }) => {
 
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/
         if(!passwordRegex.test(formData.get("password")))
-            return setNotification({
-                        message: "Password must contain letters and numbers",
-                        type: "error"
-                    })
+            return dispatch(showNotification("Password must contain letters and numbers", "error"))
 
         const data = {
             name: formData.get("name"),
@@ -80,23 +69,13 @@ const SigninAndSignup = ({ name }) => {
 
     useEffect(() => {
         if (signInError) {
-            setNotification({
-                message: signInError,
-                type: "error"
-            })
+            dispatch(showNotification(signInError, "error"))
             dispatch(clearError())
         }
     }, [signInError, dispatch])
 
     return (
         <div className="signin-and-signup">
-            {notification &&
-                <NotificationModal
-                    notification={notification?.message}
-                    severity={notification?.type}
-                    setNotification={setNotification}
-                />
-            }
             <div className={className}>
                 <div className="form-container sign-up">
                     <form onSubmit={handleSignUp}>
